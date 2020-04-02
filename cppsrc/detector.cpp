@@ -89,7 +89,7 @@ Value Detector::detectImagePath(const CallbackInfo &info) {
 
   image loadedImage = load_image_color(imageLocation, 0, 0);
 
-  if(loadedImage == null) {
+  if(loadedImage.h <= 0) {
     Napi::Error::New(env, "Invalid Image").ThrowAsJavaScriptException();
     return det;
   }
