@@ -67,6 +67,7 @@ Detector::Detector(const CallbackInfo &info) : ObjectWrap<Detector>(info) {
 Value Detector::detectImagePath(const CallbackInfo &info) {
   Napi::Env env = info.Env();
   HandleScope scope(env);
+  Array det;
 
   int length = info.Length();
 
@@ -88,7 +89,12 @@ Value Detector::detectImagePath(const CallbackInfo &info) {
 
   image loadedImage = load_image_color(imageLocation, 0, 0);
 
-  Array det = this->detectImageInternal(env, loadedImage, thresh, heir, nms, rel);
+  if(loadedImage == null) {
+    Napi::Error::New(env, "Invalid Image").ThrowAsJavaScriptException();
+    return det;
+  }
+
+  det = this->detectImageInternal(env, loadedImage, thresh, heir, nms, rel);
 
   free_image(loadedImage);
 
@@ -121,7 +127,7 @@ Value Detector::detectImageBuffer(const CallbackInfo &info) {
   float thresh = info[4].ToNumber();
   float heir = info[5].ToNumber();
   float nms = info[6].ToNumber();
-  
+
   int rel = info[7].ToNumber();
 
   Array det = this->detectImageInternal(env, i, thresh, heir, nms, rel);
